@@ -64,3 +64,5 @@
 .reply-form textarea { flex: 1; padding: 8px; border: 1px solid #bbb; border-radius: 4px; font: inherit; }
 .btn-small { padding: 3px 8px; font-size: 12px; margin-top: 4px; }
 .inline-check { display: flex; align-items: center; gap: 6px; font-size: 14px; }
+
+

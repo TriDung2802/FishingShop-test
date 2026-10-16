@@ -1,7 +1,7 @@
 
-package model;
+package com.fishing.model;
 
-import enums.NotificationType;
+import com.fishing.enums.NotificationType;
 import java.util.Date;
 
 public class Notification {

@@ -115,7 +115,7 @@
     <jsp:include page="/WEB-INF/views/common/order-items.jsp"/>
 </section>
 
-<c:if test="${!order.status.final}">
+<c:if test="${!order.status.isFinal()}">
     <section class="panel panel-wide">
         <h2>Xử lý đơn</h2>
         <div class="admin-actions">

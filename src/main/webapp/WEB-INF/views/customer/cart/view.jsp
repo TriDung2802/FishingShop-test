@@ -29,7 +29,7 @@
     <c:when test="${empty cart.items}">
         <div class="empty-box">
             <p>Giỏ hàng của bạn đang trống.</p>
-            <a class="btn btn-primary" href="${ctx}/">Tiếp tục mua sắm</a>
+            <a class="btn btn-primary" href="${ctx}/products">Tiếp tục mua sắm</a>
         </div>
     </c:when>
     <c:otherwise>
@@ -114,7 +114,7 @@
 
             <aside class="summary-box">
                 <h2>Tóm tắt</h2>
-                <div class="sum-row"><span>Số sản phẩm</span><span>${cart.totalQuantity}</span></div>
+                <div class="sum-row"><span>Số sản phẩm: </span><span> ${cart.totalQuantity}</span></div>
                 <div class="sum-row total">
                     <span>Tạm tính</span>
                     <span><fmt:formatNumber value="${cart.total}" type="number" groupingUsed="true" maxFractionDigits="0"/> đ</span>

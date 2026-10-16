@@ -1,4 +1,4 @@
-package enums;
+package com.fishing.enums;
 
 public enum NotificationType {
     SHIPPING_UPDATE,

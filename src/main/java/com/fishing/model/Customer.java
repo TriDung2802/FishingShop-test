@@ -1,4 +1,4 @@
-package model;
+package com.fishing.model;
 
 import java.util.Date;
 
