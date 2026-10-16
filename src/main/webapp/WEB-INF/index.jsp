@@ -1,4 +1,4 @@
 <%
-    // Tạm thời chuyển tới trang quản lý danh mục; sẽ đổi sang /products ở bước sau
-    response.sendRedirect(request.getContextPath() + "/admin/categories");
+    // Trang chủ: chuyển tới danh sách sản phẩm cho khách
+    response.sendRedirect(request.getContextPath() + "/products");
 %>
