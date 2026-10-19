@@ -1,6 +1,6 @@
 # Hướng dẫn giao diện chung (cả 4 thành viên)
 
-Mọi trang của Đô, An, Lộc, Dũng dùng **một bộ giao diện duy nhất**. Xem mẫu trực tiếp tại `/styleguide.jsp`.
+Mọi trang của Đô, An, Lộc, Dũng dùng **một bộ giao diện duy nhất**.
 
 ## 1. Cấu trúc giao diện
 
