@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <jsp:include page="/WEB-INF/views/common/shop-header.jsp">
     <jsp:param name="title" value="Sản phẩm"/>
@@ -44,39 +44,7 @@
 
 <div class="grid">
     <c:forEach var="p" items="${products}">
-        <c:set var="rt" value="${ratings[p.id]}"/>
-        <a class="card" href="${ctx}/product?id=${p.id}">
-            <div class="card-img">
-                <c:choose>
-                    <c:when test="${not empty p.thumbnailUrl}">
-                        <img src="${ctx}<c:out value='${p.thumbnailUrl}'/>" alt="">
-                    </c:when>
-                    <c:otherwise><span class="muted">Chưa có ảnh</span></c:otherwise>
-                </c:choose>
-            </div>
-            <div class="card-body">
-                <div class="card-brand"><c:out value="${p.brand.name}"/></div>
-                <div class="card-title"><c:out value="${p.name}"/></div>
-
-                <div class="stars card-rating">
-                    <c:if test="${not empty rt}">
-                        <c:set var="rounded" value="${rt.average + 0.5}"/>
-                        <c:forEach begin="1" end="5" var="i">
-                            <span class="star ${i <= rounded ? 'on' : ''}">★</span>
-                        </c:forEach>
-                        <span class="muted">(${rt.count})</span>
-                    </c:if>
-                    <c:if test="${empty rt}"><span class="muted">Chưa có đánh giá</span></c:if>
-                </div>
-
-                <div class="card-price">
-                    <fmt:formatNumber value="${p.price}" type="number" groupingUsed="true" maxFractionDigits="0"/> đ
-                </div>
-                <c:if test="${p.status == 'OUT_OF_STOCK'}">
-                    <span class="badge badge-off">Hết hàng</span>
-                </c:if>
-            </div>
-        </a>
+        <t:productCard product="${p}" rating="${ratings[p.id]}"/>
     </c:forEach>
 </div>
 
