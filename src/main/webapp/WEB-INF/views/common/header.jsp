@@ -13,7 +13,7 @@
 <body class="admin">
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-top">
-        <a class="sidebar-brand" href="${ctx}/admin/categories">🎣 Fishing Shop <small>Quản trị</small></a>
+        <a class="sidebar-brand" href="${ctx}/admin/categories">🎣 Fishing Tackle Shop <small>Quản trị</small></a>
         <button type="button" class="nav-toggle" data-toggle="sidebar" aria-label="Mở menu" aria-expanded="false">☰</button>
     </div>
 
