@@ -6,6 +6,8 @@
     <jsp:param name="title" value="Trang chủ"/>
 </jsp:include>
 
+<link rel="stylesheet" href="${ctx}/css/home.css">
+
 <section class="hero">
     <h1>Thiết bị câu cá chính hãng</h1>
     <p>Cần câu, máy câu, dây câu, mồi câu từ các thương hiệu hàng đầu.</p>
