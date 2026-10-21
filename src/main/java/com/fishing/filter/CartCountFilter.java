@@ -1,7 +1,7 @@
 package com.fishing.filter;
 
 import com.fishing.dao.CartDAO;
-import com.fishing.util.TempAuth;
+import com.fishing.util.AuthUtil;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -37,6 +37,6 @@ public class CartCountFilter implements Filter {
     }
 
     public static void refresh(HttpServletRequest req, CartDAO dao) {
-        req.getSession().setAttribute(ATTR, dao.countQuantity(TempAuth.getCustomerId(req)));
+        req.getSession().setAttribute(ATTR, dao.countQuantity(AuthUtil.getCustomerId(req)));
     }
 }

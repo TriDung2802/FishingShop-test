@@ -4,7 +4,7 @@ import com.fishing.dao.FeedbackDAO;
 import com.fishing.dao.ProductDAO;
 import com.fishing.model.Product;
 import com.fishing.util.ProductRules;
-import com.fishing.util.TempAuth;
+import com.fishing.util.AuthUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -47,7 +47,7 @@ public class FeedbackServlet extends HttpServlet {
             flash(req, "error", "Bình luận tối đa " + MAX_COMMENT + " ký tự.");
         } else {
             // TODO: sau khi có đăng nhập, bắt buộc phải đăng nhập (và đã mua hàng) mới được gửi
-            feedbackDAO.add(productId, TempAuth.getCustomerId(req), rating,
+            feedbackDAO.add(productId, AuthUtil.getCustomerId(req), rating,
                     comment.isEmpty() ? null : comment);
             flash(req, "success", "Cảm ơn bạn đã đánh giá sản phẩm!");
         }

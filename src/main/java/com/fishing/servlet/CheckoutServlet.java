@@ -8,7 +8,7 @@ import com.fishing.model.Cart;
 import com.fishing.model.Order;
 import com.fishing.util.BusinessException;
 import com.fishing.util.ShopConfig;
-import com.fishing.util.TempAuth;
+import com.fishing.util.AuthUtil;
 import com.fishing.util.WebUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -65,7 +65,7 @@ public class CheckoutServlet extends HttpServlet {
         }
 
         try {
-            Order order = orderDAO.placeOrder(TempAuth.getCustomerId(req), info);
+            Order order = orderDAO.placeOrder(AuthUtil.getCustomerId(req), info);
             req.getSession().setAttribute(LAST_INFO, info);
             CartCountFilter.refresh(req, cartDAO);
             WebUtil.flash(req, "success", "Đặt hàng thành công! Mã đơn của bạn là " + order.getCode() + ".");
@@ -80,7 +80,7 @@ public class CheckoutServlet extends HttpServlet {
 
     private void showForm(HttpServletRequest req, HttpServletResponse resp, OrderDAO.ShippingInfo info)
             throws ServletException, IOException {
-        Cart cart = cartDAO.findByCustomer(TempAuth.getCustomerId(req));
+        Cart cart = cartDAO.findByCustomer(AuthUtil.getCustomerId(req));
         if (cart.getItems().isEmpty()) {
             WebUtil.flash(req, "error", "Giỏ hàng đang trống.");
             resp.sendRedirect(req.getContextPath() + "/cart");

@@ -12,6 +12,9 @@
         <class>com.fishing.model.ProductImage</class>
         <class>com.fishing.model.Feedback</class>
         <class>com.fishing.model.SubFeedback</class>
+
+        <class>com.fishing.model.Customer</class>
+        <class>com.fishing.model.Admin</class>
         <!-- Giỏ hàng & Đơn hàng (An) -->
         <class>com.fishing.model.Cart</class>
         <class>com.fishing.model.CartItem</class>

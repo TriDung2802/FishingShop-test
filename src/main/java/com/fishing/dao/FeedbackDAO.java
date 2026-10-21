@@ -11,14 +11,34 @@ import java.util.List;
 
 public class FeedbackDAO {
 
+    /** Khách đã mua sản phẩm này chưa (có ít nhất một đơn chưa bị hủy chứa sản phẩm). */
+    public boolean hasPurchased(Long customerId, Long productId) {
+        if (customerId == null || productId == null) {
+            return false;
+        }
+        EntityManager em = JPAUtil.createEntityManager();
+        try {
+            Long n = em.createQuery(
+                            "SELECT COUNT(li) FROM LineItem li WHERE li.order.customerId = :cid "
+                                    + "AND li.product.id = :pid AND li.order.status <> :cancelled", Long.class)
+                    .setParameter("cid", customerId)
+                    .setParameter("pid", productId)
+                    .setParameter("cancelled", com.fishing.enums.OrderStatus.CANCELLED)
+                    .getSingleResult();
+            return n > 0;
+        } finally {
+            em.close();
+        }
+    }
+
     /** Đánh giá của một sản phẩm (mới nhất trước), kèm các câu trả lời (cũ trước). */
     public List<Feedback> findByProduct(Long productId) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
             return em.createQuery(
-                    "SELECT f FROM Feedback f LEFT JOIN FETCH f.subFeedbacks s "
-                  + "WHERE f.product.id = :pid "
-                  + "ORDER BY f.createdAt DESC, s.createdAt ASC", Feedback.class)
+                            "SELECT f FROM Feedback f LEFT JOIN FETCH f.subFeedbacks s "
+                                    + "WHERE f.product.id = :pid "
+                                    + "ORDER BY f.createdAt DESC, s.createdAt ASC", Feedback.class)
                     .setParameter("pid", productId)
                     .getResultList();
         } finally {
@@ -31,8 +51,8 @@ public class FeedbackDAO {
         EntityManager em = JPAUtil.createEntityManager();
         try {
             Object[] row = em.createQuery(
-                    "SELECT AVG(f.rating), COUNT(f) FROM Feedback f WHERE f.product.id = :pid",
-                    Object[].class)
+                            "SELECT AVG(f.rating), COUNT(f) FROM Feedback f WHERE f.product.id = :pid",
+                            Object[].class)
                     .setParameter("pid", productId)
                     .getSingleResult();
             double avg = row[0] == null ? 0 : ((Number) row[0]).doubleValue();
@@ -49,7 +69,7 @@ public class FeedbackDAO {
         try {
             StringBuilder jpql = new StringBuilder(
                     "SELECT f FROM Feedback f JOIN FETCH f.product "
-                  + "LEFT JOIN FETCH f.subFeedbacks s WHERE 1 = 1");
+                            + "LEFT JOIN FETCH f.subFeedbacks s WHERE 1 = 1");
             if (productId != null) {
                 jpql.append(" AND f.product.id = :pid");
             }

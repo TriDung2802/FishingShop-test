@@ -22,5 +22,10 @@
     </nav>
 
     <a class="sidebar-link" href="${ctx}/home" target="_blank">Xem trang khách &nearr;</a>
+    <form method="post" action="${ctx}/logout">
+        <button type="submit" class="sidebar-link" style="background:none;border:0;cursor:pointer;text-align:left;width:100%;font-family:inherit">
+            Đăng xuất (<c:out value="${sessionScope.currentUserName}"/>)
+        </button>
+    </form>
 </aside>
 <main class="container">

@@ -86,3 +86,12 @@ body.login-page {
     color: #dc2626;
     font-size: 14px;
 }
+
+.login-container .success-message {
+    margin: 0 0 16px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #e8f6ee;
+    color: #1b6b3a;
+    font-size: 14px;
+}

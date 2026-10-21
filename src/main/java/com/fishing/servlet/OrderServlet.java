@@ -6,7 +6,7 @@ import com.fishing.dao.ShippingDAO;
 import com.fishing.model.Order;
 import com.fishing.util.BusinessException;
 import com.fishing.util.ShopConfig;
-import com.fishing.util.TempAuth;
+import com.fishing.util.AuthUtil;
 import com.fishing.util.WebUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -35,7 +35,7 @@ public class OrderServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        Long customerId = TempAuth.getCustomerId(req);
+        Long customerId = AuthUtil.getCustomerId(req);
         String idParam = req.getParameter("id");
 
         if (idParam == null) {
@@ -75,7 +75,7 @@ public class OrderServlet extends HttpServlet {
             reason = reason.substring(0, 255);
         }
         try {
-            orderDAO.cancelOrder(id, TempAuth.getCustomerId(req),
+            orderDAO.cancelOrder(id, AuthUtil.getCustomerId(req),
                     reason.isEmpty() ? "Khách hàng hủy" : "Khách hàng hủy: " + reason);
             WebUtil.flash(req, "success", "Đã hủy đơn hàng.");
         } catch (BusinessException e) {

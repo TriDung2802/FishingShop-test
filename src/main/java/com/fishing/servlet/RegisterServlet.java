@@ -3,9 +3,6 @@ package com.fishing.servlet;
 
 import com.fishing.dao.CustomerDAO;
 import com.fishing.model.Customer;
-import com.fishing.util.JPAUtil;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -14,8 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.UUID;
 
 @WebServlet("/register")
 public class RegisterServlet extends HttpServlet {
@@ -75,34 +70,13 @@ public class RegisterServlet extends HttpServlet {
                 return;
             }
 
-            String customerId = "CUS-" + UUID.randomUUID();
-            String hashedPassword =
-                    BCrypt.hashpw(password, BCrypt.gensalt());
-
-            Customer customer = new Customer(
-                    customerId,
+            String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+            customerDAO.save(new Customer(
                     fullName,
                     email,
                     hashedPassword,
-                    phone == null || phone.isBlank() ? null : phone,
-                    new Date()
-            );
-
-            EntityManager em = JPAUtil.createEntityManager();
-            EntityTransaction transaction = em.getTransaction();
-
-            try {
-                transaction.begin();
-                em.persist(customer);
-                transaction.commit();
-            } catch (Exception e) {
-                if (transaction.isActive()) {
-                    transaction.rollback();
-                }
-                throw e;
-            } finally {
-                em.close();
-            }
+                    phone == null || phone.isBlank() ? null : phone
+            ));
 
             response.sendRedirect(
                     request.getContextPath() + "/login.jsp?registered=1"

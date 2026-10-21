@@ -18,8 +18,6 @@
 <a class="${sp == '/admin/payments' ? 'active' : ''}" href="${ctx}/admin/payments">Thanh toán</a>
 <a class="${sp == '/admin/shippings' ? 'active' : ''}" href="${ctx}/admin/shippings">Vận chuyển</a>
 
-<%-- ===== Người dùng & tương tác (Dũng): bỏ chú thích các dòng dưới khi trang đã làm xong =====
-<div class="menu-group">Người dùng</div>
-<a class="${sp == '/admin/customers' ? 'active' : ''}" href="${ctx}/admin/customers">Khách hàng</a>
-<a class="${sp == '/admin/promotions' ? 'active' : ''}" href="${ctx}/admin/promotions">Khuyến mãi</a>
---%>
+<%-- ===== Khuyến mãi (Dũng) ===== --%>
+<div class="menu-group">Khuyến mãi</div>
+<a class="${sp == '/admin/promotions' ? 'active' : ''}" href="${ctx}/admin/promotions">Mã giảm giá</a>

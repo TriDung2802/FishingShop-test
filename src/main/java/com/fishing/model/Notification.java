@@ -1,111 +1,99 @@
-
 package com.fishing.model;
 
-import java.util.Date;
-
 import com.fishing.enums.NotificationType;
+import jakarta.persistence.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+/** Thông báo gửi tới một khách hàng (lưu trong database). */
+@Entity
+@Table(name = "notifications", indexes = @Index(name = "idx_notification_recipient", columnList = "recipient_id"))
 public class Notification {
 
-    private String notificationId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
     private NotificationType type;
+
+    @Column(nullable = false, length = 150)
     private String title;
+
+    @Column(nullable = false, length = 500)
     private String content;
+
+    @Column(name = "is_read", nullable = false)
     private boolean isRead;
-    private Date sentAt;
-    private String senderId;
-    private String recipientId;
 
-    public Notification() {
-    }
+    @Column(name = "sent_at", nullable = false, updatable = false)
+    private LocalDateTime sentAt = LocalDateTime.now();
 
-    public Notification(String notificationId,
-                        NotificationType type,
-                        String title, String content,
-                        boolean isRead, Date sentAt,
-                        String senderId, String recipientId) {
-        this.notificationId = notificationId;
+    /** Admin gửi (null nếu hệ thống tự gửi). */
+    @Column(name = "sender_id")
+    private Long senderId;
+
+    /** Id khách nhận. */
+    @Column(name = "recipient_id", nullable = false)
+    private Long recipientId;
+
+    public Notification() {}
+
+    public Notification(Long recipientId, NotificationType type, String title, String content) {
+        this.recipientId = recipientId;
         this.type = type;
         this.title = title;
         this.content = content;
-        this.isRead = isRead;
-        this.sentAt = sentAt;
-        this.senderId = senderId;
-        this.recipientId = recipientId;
-    }
-
-    public String getNotificationId() {
-        return notificationId;
-    }
-
-    public void setNotificationId(String notificationId) {
-        this.notificationId = notificationId;
-    }
-
-    public NotificationType getType() {
-        return type;
-    }
-
-    public void setType(NotificationType type) {
-        this.type = type;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public boolean isRead() {
-        return isRead;
-    }
-
-    public void setRead(boolean isRead) {
-        this.isRead = isRead;
-    }
-
-    public Date getSentAt() {
-        return sentAt;
-    }
-
-    public void setSentAt(Date sentAt) {
-        this.sentAt = sentAt;
-    }
-
-    public String getSenderId() {
-        return senderId;
-    }
-
-    public void setSenderId(String senderId) {
-        this.senderId = senderId;
-    }
-
-    public String getRecipientId() {
-        return recipientId;
-    }
-
-    public void setRecipientId(String recipientId) {
-        this.recipientId = recipientId;
-    }
-
-    public boolean send() {
-        return type != null
-                && title != null && !title.isBlank()
-                && content != null && !content.isBlank()
-                && recipientId != null && !recipientId.isBlank();
     }
 
     public void markAsRead() {
         this.isRead = true;
     }
+
+    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+    /** "Vừa xong", "5 phút trước", "2 giờ trước", hoặc ngày giờ nếu đã lâu. */
+    public String getTimeText() {
+        if (sentAt == null) {
+            return "";
+        }
+        long minutes = Duration.between(sentAt, LocalDateTime.now()).toMinutes();
+        if (minutes < 1) {
+            return "Vừa xong";
+        }
+        if (minutes < 60) {
+            return minutes + " phút trước";
+        }
+        if (minutes < 24 * 60) {
+            return (minutes / 60) + " giờ trước";
+        }
+        return sentAt.format(DATE_FMT);
+    }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public NotificationType getType() { return type; }
+    public void setType(NotificationType type) { this.type = type; }
+
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
+
+    public boolean isRead() { return isRead; }
+    public void setRead(boolean read) { this.isRead = read; }
+
+    public LocalDateTime getSentAt() { return sentAt; }
+    public void setSentAt(LocalDateTime sentAt) { this.sentAt = sentAt; }
+
+    public Long getSenderId() { return senderId; }
+    public void setSenderId(Long senderId) { this.senderId = senderId; }
+
+    public Long getRecipientId() { return recipientId; }
+    public void setRecipientId(Long recipientId) { this.recipientId = recipientId; }
 }

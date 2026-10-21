@@ -50,7 +50,11 @@ public class Order {
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal subtotal = BigDecimal.ZERO;
 
-    // Giảm giá từ Promotion (phần của Dũng), hiện = 0
+    // Mã giảm giá đã dùng (lưu lại mã để sau này Promotion bị sửa/xóa đơn cũ vẫn đúng)
+    @Column(name = "promotion_code", length = 30)
+    private String promotionCode;
+
+    // Giảm giá từ Promotion
     @Column(name = "discount_amount", nullable = false, precision = 15, scale = 2)
     private BigDecimal discountAmount = BigDecimal.ZERO;
 
@@ -143,6 +147,9 @@ public class Order {
 
     public BigDecimal getDiscountAmount() { return discountAmount; }
     public void setDiscountAmount(BigDecimal discountAmount) { this.discountAmount = discountAmount; }
+
+    public String getPromotionCode() { return promotionCode; }
+    public void setPromotionCode(String promotionCode) { this.promotionCode = promotionCode; }
 
     public BigDecimal getShippingFee() { return shippingFee; }
     public void setShippingFee(BigDecimal shippingFee) { this.shippingFee = shippingFee; }

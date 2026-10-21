@@ -2,7 +2,7 @@ package com.fishing.servlet;
 
 import com.fishing.dao.FeedbackDAO;
 import com.fishing.dao.ProductDAO;
-import com.fishing.util.TempAuth;
+import com.fishing.util.AuthUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -61,7 +61,7 @@ public class AdminFeedbackServlet extends HttpServlet {
         } else if (content.length() > MAX_REPLY) {
             flash(req, "error", "Nội dung trả lời tối đa " + MAX_REPLY + " ký tự.");
         } else {
-            feedbackDAO.addReply(feedbackId, TempAuth.getAdminId(req), content);
+            feedbackDAO.addReply(feedbackId, AuthUtil.getAdminId(req), content);
             flash(req, "success", "Đã gửi câu trả lời.");
         }
     }

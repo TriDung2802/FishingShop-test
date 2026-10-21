@@ -1,5 +1,6 @@
 package com.fishing.dao;
 
+import com.fishing.enums.NotificationType;
 import com.fishing.enums.OrderStatus;
 import com.fishing.enums.PaymentMethod;
 import com.fishing.enums.ProductStatus;
@@ -8,6 +9,7 @@ import com.fishing.model.CartItem;
 import com.fishing.model.LineItem;
 import com.fishing.model.Order;
 import com.fishing.model.Product;
+import com.fishing.model.Promotion;
 import com.fishing.util.BusinessException;
 import com.fishing.util.JPAUtil;
 import com.fishing.util.ProductRules;
@@ -32,6 +34,9 @@ public class OrderDAO {
     // Phần của Lộc: thanh toán & vận chuyển được cập nhật trong cùng transaction với đơn hàng
     private final PaymentDAO paymentDAO = new PaymentDAO();
     private final ShippingDAO shippingDAO = new ShippingDAO();
+    // Phần của Dũng: mã giảm giá và thông báo, cũng chạy trong cùng transaction
+    private final PromotionDAO promotionDAO = new PromotionDAO();
+    private final NotificationDAO notificationDAO = new NotificationDAO();
 
     /** Dữ liệu người nhận từ form Checkout. */
     public static class ShippingInfo implements java.io.Serializable {
@@ -41,6 +46,7 @@ public class OrderDAO {
         public String shippingAddress;
         public String note;
         public PaymentMethod paymentMethod = PaymentMethod.COD;
+        public String promoCode;   // mã giảm giá khách nhập (có thể rỗng)
 
         // Getter để JSP đọc được: ${info.receiverName}
         public String getReceiverName() { return receiverName; }
@@ -48,6 +54,7 @@ public class OrderDAO {
         public String getShippingAddress() { return shippingAddress; }
         public String getNote() { return note; }
         public PaymentMethod getPaymentMethod() { return paymentMethod; }
+        public String getPromoCode() { return promoCode; }
     }
 
     // =====================================================================
@@ -118,8 +125,22 @@ public class OrderDAO {
             // 4. Tính tiền, lưu đơn, xóa giỏ
             order.recalculate();                                        // tính tạm tính
             order.setShippingFee(ShopConfig.calculateShippingFee(order.getSubtotal()));
-            order.recalculate();                                        // tính lại tổng có phí ship
+
+            // Mã giảm giá: kiểm tra lại trong transaction (mã có thể vừa hết hạn / bị tắt)
+            if (info.promoCode != null && !info.promoCode.isBlank()) {
+                Promotion promo = promotionDAO.findActiveByCode(em, info.promoCode);
+                if (promo == null) {
+                    throw new BusinessException("Mã giảm giá \"" + info.promoCode.trim()
+                            + "\" không hợp lệ hoặc đã hết hạn.");
+                }
+                order.setPromotionCode(promo.getCode());
+                order.setDiscountAmount(promo.computeDiscount(order.getSubtotal()));
+            }
+            order.recalculate();                                        // tính lại tổng có giảm giá + phí ship
             em.persist(order);              // cascade lưu luôn các LineItem
+
+            notificationDAO.create(em, customerId, NotificationType.ORDER_CREATED, "Đặt hàng thành công",
+                    "Đơn hàng " + order.getCode() + " của bạn đã được tạo và đang chờ cửa hàng xác nhận.");
 
             // Tạo thanh toán (PENDING) và vận chuyển (Chờ lấy hàng) cho đơn – phần của Lộc
             paymentDAO.createForOrder(em, order, info.paymentMethod);
@@ -267,6 +288,14 @@ public class OrderDAO {
                 paymentDAO.onOrderDelivered(em, orderId);
             }
             o.setStatus(next);
+            if (next == OrderStatus.SHIPPING) {
+                notificationDAO.create(em, o.getCustomerId(), NotificationType.SHIPPING_UPDATE,
+                        "Đơn hàng đang được giao", "Đơn hàng " + o.getCode() + " đã được giao cho đơn vị vận chuyển.");
+            } else if (next == OrderStatus.SUCCESS) {
+                notificationDAO.create(em, o.getCustomerId(), NotificationType.SHIPPING_UPDATE,
+                        "Giao hàng thành công", "Đơn hàng " + o.getCode() + " đã được giao thành công. "
+                                + "Cảm ơn bạn đã mua sắm!");
+            }
             em.getTransaction().commit();
             return next;
         } catch (RuntimeException e) {
@@ -326,6 +355,9 @@ public class OrderDAO {
             o.setStatus(OrderStatus.CANCELLED);
             o.setCancelledAt(LocalDateTime.now());
             o.setCancelReason(reason);
+            notificationDAO.create(em, o.getCustomerId(), NotificationType.ORDER_CANCELLED,
+                    "Đơn hàng đã bị hủy", "Đơn hàng " + o.getCode() + " đã được hủy"
+                            + (customerId == null ? " bởi cửa hàng." : "."));
             em.getTransaction().commit();
         } catch (RuntimeException e) {
             if (em.getTransaction().isActive()) {
