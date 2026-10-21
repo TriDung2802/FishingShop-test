@@ -1,7 +1,7 @@
 # Giỏ hàng & Đơn hàng – phần của An
 
 Mô-đun: **Cart, CartItem, Order, LineItem** (+ enum `OrderStatus`).
-Viết theo đúng cách của phần Đô: JPA/Hibernate + Servlet + JSP, cùng `JPAUtil`, `TempAuth`, flash message, CSS chung.
+Viết theo đúng cách của phần Đô: JPA/Hibernate + Servlet + JSP, cùng `JPAUtil`, `AuthUtil`, flash message, CSS chung.
 
 ## 1. Danh sách file
 
@@ -75,7 +75,7 @@ Lỗi ở bước nào → `BusinessException` → rollback toàn bộ, kho khô
 
 | Phần | Hiện tại | Khi ghép |
 |---|---|---|
-| Dũng – đăng nhập | Dùng `TempAuth.getCustomerId()` (mặc định khách #1) | Dũng sửa `TempAuth` là xong, code giỏ/đơn không phải đổi. Nên chặn `/cart`, `/checkout`, `/orders` khi chưa đăng nhập và `/admin/*` khi không phải admin |
+| Dũng – đăng nhập | Dùng `TempAuth.getCustomerId()` (mặc định khách #1) | Dũng sửa `AuthUtil` là xong, code giỏ/đơn không phải đổi. Nên chặn `/cart`, `/checkout`, `/orders` khi chưa đăng nhập và `/admin/*` khi không phải admin |
 | Dũng – Address | Checkout nhập tay họ tên, SĐT, địa chỉ | Cho chọn Address có sẵn rồi copy vào 3 cột snapshot của Order |
 | Dũng – Promotion | `discountAmount = 0` | Kiểm tra mã ở checkout → set `discountAmount` trước `order.recalculate()` |
 | Lộc – Payment, Shipping | **Đã ghép xong** | Xem `HUONG_DAN_THANH_TOAN_VAN_CHUYEN.md` |

@@ -9,4 +9,4 @@
 <%-- Giỏ hàng, đơn hàng (An); số lượng giỏ lấy từ CartCountFilter --%>
 <a class="${sp == '/cart' || sp == '/checkout' ? 'active' : ''}" href="${ctx}/cart">Giỏ hàng<c:if test="${sessionScope.cartCount > 0}"><span class="cart-count"> (${sessionScope.cartCount})</span></c:if></a>
 <a class="${sp == '/orders' ? 'active' : ''}" href="${ctx}/orders">Đơn hàng của tôi</a>
-<a class="${sp == '/account/addresses' ? 'active' : ''}" href="${ctx}/account/addresses">Sổ địa chỉ</a>
+

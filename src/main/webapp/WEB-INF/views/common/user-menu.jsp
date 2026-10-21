@@ -27,9 +27,8 @@
     <c:choose>
         <c:when test="${not empty sessionScope.role}">
             <span class="user-name">Xin chào, <c:out value="${sessionScope.currentUserName}"/></span>
-            <c:if test="${sessionScope.role == 'CUSTOMER'}">
-                <a class="btn btn-ghost btn-sm" href="${ctx}/account/addresses">Sổ địa chỉ</a>
-            </c:if>
+
+
             <c:if test="${sessionScope.role == 'ADMIN'}">
                 <a class="btn btn-ghost btn-sm" href="${ctx}/admin/products">Quản trị</a>
             </c:if>
@@ -38,7 +37,6 @@
             </form>
         </c:when>
         <c:otherwise>
-            <a class="btn btn-ghost btn-sm" href="${ctx}/login">Đăng nhập</a>
             <a class="btn btn-accent btn-sm" href="${ctx}/register">Đăng ký</a>
         </c:otherwise>
     </c:choose>

@@ -50,7 +50,7 @@ Mọi trang của Đô, An, Lộc, Dũng dùng **một bộ giao diện duy nh�
 
 1. Mẫu trang trong `docs/mau-giao-dien-dung/`: `login.jsp`, `register.jsp`, `address-list.jsp`. Chép vào `WEB-INF/views/customer/...`, đổi tên biến cho khớp servlet của bạn.
 2. Khi trang đăng nhập đã chạy: đổi `authEnabled` trong `WEB-INF/web.xml` thành `true` thì header khách tự hiện Đăng nhập / Đăng ký / Đăng xuất.
-3. Sau khi đăng nhập thành công, đặt vào session: `currentUserName` (String), `customerId` (Long), `role` ("CUSTOMER" hoặc "ADMIN"). Sửa 2 hàm trong `TempAuth` để lấy id từ đó.
+3. Sau khi đăng nhập thành công, đặt vào session: `currentUserName` (String), `customerId` (Long), `role` ("CUSTOMER" hoặc "ADMIN"). Sửa 2 hàm trong `AuthUtil` để lấy id từ đó.
 4. Trang Admin của bạn (khách hàng, khuyến mãi): dùng `.table`, `.form`, `.filter-bar` như trang sản phẩm; thêm link vào nhóm "Người dùng" trong `admin-menu.jsp` (bỏ dấu chú thích sẵn có).
 5. Danh sách thông báo thật: thay mảng mẫu trong `js/notification.js` bằng dữ liệu từ servlet, **giữ nguyên các id** trong `user-menu.jsp`.
 

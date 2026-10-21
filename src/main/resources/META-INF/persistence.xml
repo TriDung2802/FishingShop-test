@@ -13,6 +13,11 @@
         <class>com.fishing.model.Feedback</class>
         <class>com.fishing.model.SubFeedback</class>
 
+        <class>com.fishing.model.Address</class>
+        <class>com.fishing.model.Promotion</class>
+        <class>com.fishing.model.Notification</class>
+
+
         <class>com.fishing.model.Customer</class>
         <class>com.fishing.model.Admin</class>
         <!-- Giỏ hàng & Đơn hàng (An) -->

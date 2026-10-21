@@ -3,6 +3,7 @@ package com.fishing.servlet;
 import com.fishing.dao.CustomerDAO;
 import com.fishing.model.Admin;
 import com.fishing.model.Customer;
+import com.fishing.util.AuthUtil;
 import com.fishing.util.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
@@ -11,7 +12,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -34,12 +34,6 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
-        System.out.println(
-                org.mindrot.jbcrypt.BCrypt.hashpw(
-                        "Admin@12345",
-                        org.mindrot.jbcrypt.BCrypt.gensalt(10)
-                )
-        );
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
@@ -65,14 +59,12 @@ public class LoginServlet extends HttpServlet {
                     .getSingleResult();
 
             if (BCrypt.checkpw(password, admin.getPassword())) {
-                HttpSession session = request.getSession();
-                request.changeSessionId();
+                AuthUtil.loginAdmin(request, admin);
 
-                session.removeAttribute("customer");
-                session.setAttribute("admin", admin);
-
-                response.sendRedirect(
-                        request.getContextPath() + "/.jsp");
+                String next = AuthUtil.safeNext(request, request.getParameter("next"));
+                response.sendRedirect(next != null && next.contains("/admin/")
+                        ? next
+                        : request.getContextPath() + "/admin/products");
                 return;
             }
 
@@ -89,19 +81,18 @@ public class LoginServlet extends HttpServlet {
         }
 
         // 2. Kiểm tra tài khoản Customer bằng email
-        Customer customer = customerDAO.findByEmail(username);
+        Customer customer = customerDAO.findByEmail(username.toLowerCase());
 
         if (customer != null
                 && customer.getPassword() != null
                 && BCrypt.checkpw(password, customer.getPassword())) {
 
-            HttpSession session = request.getSession();
-            request.changeSessionId();
+            AuthUtil.loginCustomer(request, customer);
 
-            session.removeAttribute("admin");
-            session.setAttribute("customer", customer);
-
-            response.sendRedirect(request.getContextPath() + "/");
+            String next = AuthUtil.safeNext(request, request.getParameter("next"));
+            response.sendRedirect(next != null && !next.contains("/admin/")
+                    ? next
+                    : request.getContextPath() + "/home");
             return;
         }
 
