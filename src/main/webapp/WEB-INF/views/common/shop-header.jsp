@@ -2,7 +2,6 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 
-<link rel="stylesheet" href="${ctx}/css/shoph-header.css">
 <c:set var="sp" value="${requestScope['jakarta.servlet.forward.servlet_path']}" scope="request"/>
 <!DOCTYPE html>
 <html lang="vi">

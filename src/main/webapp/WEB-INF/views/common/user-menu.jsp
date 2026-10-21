@@ -6,7 +6,10 @@
      Quy ước với phần đăng nhập: sau khi đăng nhập thành công, đặt vào session
         currentUserName (String: tên hiển thị), customerId (Long), role ("CUSTOMER" hoặc "ADMIN"). --%>
 <div class="user-area">
-
+    <a href="${pageContext.request.contextPath}/login.jsp"
+       class="login-button">
+        Đăng nhập
+    </a>
     <%-- Chuông thông báo (js/notification.js đọc các id bên dưới, không đổi id) --%>
     <div class="notification-wrapper">
         <button type="button" class="notification-bell" id="notificationBell"

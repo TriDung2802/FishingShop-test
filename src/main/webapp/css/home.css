@@ -1,7 +1,21 @@
 /* ==========================================================================
    CSS TRANG CHỦ (HOME PAGE) - Đồng bộ style.css & shop.css
    ========================================================================== */
+.login-button {
+    display: inline-block;
+    padding: 8px 16px;
+    margin-right: 12px;
+    color: #ffffff;
+    background-color: #2563eb;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+}
 
+.login-button:hover {
+    background-color: #1d4ed8;
+}
 /* Hero Banner */
 .hero {
     background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #2563eb 100%);
