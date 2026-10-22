@@ -1,39 +1,58 @@
+
 # syntax=docker/dockerfile:1
 
-# ---------- Stage 1: Build WAR bằng Maven ----------
+# =========================================================
+# STAGE 1: BUILD WAR WITH MAVEN + JAVA 21
+# =========================================================
 FROM maven:3.9-eclipse-temurin-21 AS build
+
 WORKDIR /build
 
-# Tải dependency trước để tận dụng cache layer (chỉ chạy lại khi pom.xml đổi)
+# Copy pom.xml first to optimize Docker layer caching
 COPY pom.xml .
-RUN --mount=type=cache,target=/root/.m2 mvn -B -q dependency:go-offline
 
+# Download dependencies
+RUN --mount=type=cache,target=/root/.m2 \
+    mvn -B dependency:go-offline
+
+# Copy application source code
 COPY src ./src
-RUN --mount=type=cache,target=/root/.m2 mvn -B -q clean package -DskipTests
 
-# ---------- Stage 2: Chạy trên Tomcat 11 (Jakarta Servlet 6.1) ----------
+# Build the WAR file
+RUN --mount=type=cache,target=/root/.m2 \
+    mvn -B clean package -DskipTests
+
+# =========================================================
+# STAGE 2: RUN WAR ON TOMCAT 11 + JAVA 21
+# =========================================================
 FROM tomcat:11.0-jdk21-temurin
 
-# Xóa app mặc định của Tomcat, deploy WAR làm ROOT => truy cập tại http://host:8080/
+# Remove Tomcat default applications
 RUN rm -rf /usr/local/tomcat/webapps/*
-COPY --from=build /build/target/fishingshop.war /usr/local/tomcat/webapps/ROOT.war
 
-# Thư mục lưu ảnh upload (UploadUtil đọc -Dfishing.upload.dir) - nên mount volume vào đây
+# Deploy the application as ROOT
+# URL: http://localhost:8080/
+COPY --from=build /build/target/fishingshop.war \
+    /usr/local/tomcat/webapps/ROOT.war
+
+# Create persistent upload directory
 RUN mkdir -p /data/uploads
 
-# pom.xml biên dịch với --enable-preview nên JVM runtime cũng phải bật cờ này
-ENV JAVA_OPTS="--enable-preview -Dfishing.upload.dir=/data/uploads -Dfile.encoding=UTF-8"
+# Configure JVM
+ENV JAVA_OPTS="--enable-preview -Dfile.encoding=UTF-8 -Dfishing.upload.dir=/data/uploads"
 
-# Biến môi trường cho JPAUtil / EmailUtil (truyền khi chạy container, KHÔNG hard-code vào image):
-#   DB_HOST (vd: db:5432), DB_NAME, DB_USER, DB_PASSWORD, DB_SSL_MODE (require|disable)
-#   GMAIL_EMAIL, GMAIL_APP_PASSWORD
-
-# Chạy bằng user thường thay vì root
+# Run as a non-root user and grant required permissions
 RUN useradd -r -u 1001 -g root appuser \
     && chown -R 1001:0 /usr/local/tomcat /data \
     && chmod -R g+rwX /usr/local/tomcat /data
+
 USER 1001
 
+# Persist uploaded product images
 VOLUME ["/data/uploads"]
+
+# Tomcat HTTP port
 EXPOSE 8080
+
+# Start Tomcat in the foreground
 CMD ["catalina.sh", "run"]
