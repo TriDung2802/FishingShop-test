@@ -8,9 +8,14 @@ import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
-public class EmailUtil {
+public final class EmailUtil {
+
+    private EmailUtil() {
+    }
 
     public static void sendOtp(String recipientEmail, String otp)
             throws Exception {
@@ -21,35 +26,51 @@ public class EmailUtil {
         if (senderEmail == null || senderEmail.isBlank()
                 || appPassword == null || appPassword.isBlank()) {
             throw new IllegalStateException(
-                    "Chưa cấu hình GMAIL_EMAIL hoặc GMAIL_APP_PASSWORD.");
+                    "Thiếu cấu hình GMAIL_EMAIL hoặc GMAIL_APP_PASSWORD.");
         }
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.starttls.required", "true");
         props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.connectiontimeout", "10000");
+        props.put("mail.smtp.timeout", "10000");
+        props.put("mail.smtp.writetimeout", "10000");
 
-        Session session = Session.getInstance(props, new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(senderEmail, appPassword);
-            }
-        });
+        Session mailSession = Session.getInstance(
+                props,
+                new Authenticator() {
+                    @Override
+                    protected PasswordAuthentication
+                    getPasswordAuthentication() {
+                        return new PasswordAuthentication(
+                                senderEmail, appPassword);
+                    }
+                });
 
-        Message message = new MimeMessage(session);
+        MimeMessage message = new MimeMessage(mailSession);
+
         message.setFrom(new InternetAddress(senderEmail));
-        message.setRecipients(
+        message.setRecipient(
                 Message.RecipientType.TO,
-                InternetAddress.parse(recipientEmail)
-        );
-        message.setSubject("Ma OTP dat lai mat khau - Fishing Tackle Shop");
-        message.setText(
+                new InternetAddress(recipientEmail));
+
+        message.setSubject(
+                "Ma OTP dat lai mat khau - Fishing Tackle Shop",
+                StandardCharsets.UTF_8.name());
+
+        String content =
                 "Xin chao,\n\n"
-                        + "Ma OTP dat lai mat khau cua ban la: " + otp + "\n\n"
-                        + "Ma co hieu luc trong 5 phut. Khong chia se ma nay voi bat ky ai.\n\n"
-                        + "Fishing Tackle Shop"
-        );
+                        + "Ban da yeu cau dat lai mat khau tai Fishing Tackle Shop.\n\n"
+                        + "Ma OTP cua ban la: " + otp + "\n\n"
+                        + "Ma co hieu luc trong 5 phut va chi duoc su dung mot lan.\n"
+                        + "Neu ban khong yeu cau dat lai mat khau, "
+                        + "hay bo qua email nay.\n\n"
+                        + "Fishing Tackle Shop";
+
+        message.setText(content, StandardCharsets.UTF_8.name());
 
         Transport.send(message);
     }

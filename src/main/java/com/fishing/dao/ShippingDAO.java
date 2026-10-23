@@ -97,12 +97,6 @@ public class ShippingDAO {
             s.setCarrierName(carrierName);
             s.setTrackingNumber(trackingNumber);
             s.setExpectedDeliveryDate(expectedDate);
-            if (trackingNumber != null) {
-                new NotificationDAO().create(em, s.getOrder().getCustomerId(),
-                        com.fishing.enums.NotificationType.SHIPPING_UPDATE, "Cập nhật vận chuyển",
-                        "Đơn hàng " + s.getOrder().getCode() + " có mã vận đơn " + trackingNumber
-                                + (carrierName == null ? "." : " (" + carrierName + ")."));
-            }
             em.getTransaction().commit();
         } catch (RuntimeException e) {
             if (em.getTransaction().isActive()) {
