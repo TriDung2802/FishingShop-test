@@ -69,15 +69,17 @@ public class RegisterServlet extends HttpServlet {
                         "Email này đã được đăng ký.");
                 return;
             }
-
+            String customerId = "CUS-" + java.util.UUID.randomUUID();
             String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-            customerDAO.save(new Customer(
-                    fullName,
-                    email,
-                    hashedPassword,
-                    phone == null || phone.isBlank() ? null : phone
-            ));
-
+            Customer customer = new Customer(
+                customerId,
+                fullName,
+                email,
+                hashedPassword,
+                phone == null || phone.isBlank() ? null : phone,
+                new java.util.Date()
+            );
+            customerDAO.save(customer);
             response.sendRedirect(
                     request.getContextPath() + "/login.jsp?registered=1"
             );

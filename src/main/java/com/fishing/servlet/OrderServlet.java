@@ -35,7 +35,7 @@ public class OrderServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        Long customerId = AuthUtil.getCustomerId(req);
+        String customerId = AuthUtil.getCustomerId(req);
         String idParam = req.getParameter("id");
 
         if (idParam == null) {

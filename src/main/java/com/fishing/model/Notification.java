@@ -13,8 +13,8 @@ import java.time.format.DateTimeFormatter;
 public class Notification {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column (length =36)
+    private String id = java.util.UUID.randomUUID().toString();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -34,15 +34,15 @@ public class Notification {
 
     /** Admin gửi (null nếu hệ thống tự gửi). */
     @Column(name = "sender_id")
-    private Long senderId;
+    private String senderId;
 
     /** Id khách nhận. */
     @Column(name = "recipient_id", nullable = false)
-    private Long recipientId;
+    private String recipientId;
 
     public Notification() {}
 
-    public Notification(Long recipientId, NotificationType type, String title, String content) {
+    public Notification(String recipientId, NotificationType type, String title, String content) {
         this.recipientId = recipientId;
         this.type = type;
         this.title = title;
@@ -73,8 +73,8 @@ public class Notification {
         return sentAt.format(DATE_FMT);
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     public NotificationType getType() { return type; }
     public void setType(NotificationType type) { this.type = type; }
@@ -91,9 +91,9 @@ public class Notification {
     public LocalDateTime getSentAt() { return sentAt; }
     public void setSentAt(LocalDateTime sentAt) { this.sentAt = sentAt; }
 
-    public Long getSenderId() { return senderId; }
-    public void setSenderId(Long senderId) { this.senderId = senderId; }
+    public String getSenderId() { return senderId; }
+    public void setSenderId(String senderId) { this.senderId = senderId; }
 
-    public Long getRecipientId() { return recipientId; }
-    public void setRecipientId(Long recipientId) { this.recipientId = recipientId; }
+    public String getRecipientId() { return recipientId; }
+    public void setRecipientId(String recipientId) { this.recipientId = recipientId; }
 }

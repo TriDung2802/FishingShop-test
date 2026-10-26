@@ -24,7 +24,7 @@ public class Order {
 
     // Tạm dùng số, sau này đổi thành @ManyToOne Customer (phần của Dũng)
     @Column(name = "customer_id", nullable = false)
-    private Long customerId;
+    private String customerId;
 
     @Column(name = "order_date", nullable = false, updatable = false)
     private LocalDateTime orderDate = LocalDateTime.now();
@@ -121,8 +121,7 @@ public class Order {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public Long getCustomerId() { return customerId; }
-    public void setCustomerId(Long customerId) { this.customerId = customerId; }
+    public String getCustomerId() { return customerId; }
 
     public LocalDateTime getOrderDate() { return orderDate; }
     public void setOrderDate(LocalDateTime orderDate) { this.orderDate = orderDate; }
@@ -165,4 +164,8 @@ public class Order {
 
     public List<LineItem> getItems() { return items; }
     public void setItems(List<LineItem> items) { this.items = items; }
+
+    public void setCustomerId(String customerId) {
+    this.customerId = customerId;
+}
 }

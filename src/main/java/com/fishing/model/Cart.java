@@ -21,7 +21,7 @@ public class Cart {
 
     // Tạm dùng số, sau này đổi thành @OneToOne Customer (phần của Dũng)
     @Column(name = "customer_id", nullable = false, unique = true)
-    private Long customerId;
+    private String customerId;
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt = LocalDateTime.now();
@@ -32,7 +32,7 @@ public class Cart {
 
     public Cart() {}
 
-    public Cart(Long customerId) {
+    public Cart(String customerId) {
         this.customerId = customerId;
     }
 
@@ -86,8 +86,8 @@ public class Cart {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public Long getCustomerId() { return customerId; }
-    public void setCustomerId(Long customerId) { this.customerId = customerId; }
+    public String getCustomerId() { return customerId; }
+    public void setCustomerId(String customerId) { this.customerId = customerId; }
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }

@@ -13,7 +13,7 @@ public class NotificationDAO {
      * Tạo thông báo trong CÙNG transaction của nghiệp vụ gọi nó (đặt hàng, hủy đơn...):
      * nghiệp vụ rollback thì thông báo cũng không được lưu.
      */
-    public void create(EntityManager em, Long recipientId, NotificationType type, String title, String content) {
+    public void create(EntityManager em, String recipientId, NotificationType type, String title, String content) {
         if (recipientId == null) {
             return;
         }
@@ -21,7 +21,7 @@ public class NotificationDAO {
     }
 
     /** Thông báo của một khách, mới nhất trước. */
-    public List<Notification> findByRecipient(Long customerId, int limit) {
+    public List<Notification> findByRecipient1(String customerId, int limit) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
             return em.createQuery(
@@ -35,7 +35,7 @@ public class NotificationDAO {
         }
     }
 
-    public long countUnread(Long customerId) {
+    public long countUnread(String customerId) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
             return em.createQuery(
@@ -49,17 +49,17 @@ public class NotificationDAO {
     }
 
     /** Chỉ đánh dấu được thông báo của chính khách đó. */
-    public void markRead(Long id, Long customerId) {
+    public void markRead(String id, String customerId) {
         run("UPDATE Notification n SET n.isRead = true WHERE n.id = :id AND n.recipientId = :cid",
                 id, customerId);
     }
 
-    public void markAllRead(Long customerId) {
+    public void markAllRead1(String customerId) {
         run("UPDATE Notification n SET n.isRead = true WHERE n.recipientId = :cid AND n.isRead = false",
                 null, customerId);
     }
 
-    private void run(String jpql, Long id, Long customerId) {
+    private void run(String jpql, String id, String customerId) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
             em.getTransaction().begin();
@@ -77,5 +77,11 @@ public class NotificationDAO {
         } finally {
             em.close();
         }
+    }
+    public List<Notification> findByRecipient(String customerId, int limit){
+        return findByRecipient1(customerId, limit);
+    }
+    public void markAllRead(String customerId){
+        markAllRead1(customerId);
     }
 }

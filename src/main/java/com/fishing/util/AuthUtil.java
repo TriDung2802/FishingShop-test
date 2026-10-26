@@ -18,23 +18,23 @@ public final class AuthUtil {
     private AuthUtil() {}
 
     /** Id khách đang đăng nhập; null nếu chưa đăng nhập hoặc đang là admin. */
-    public static Long getCustomerId(HttpServletRequest req) {
+    public static String getCustomerId(HttpServletRequest req) {
         HttpSession session = req.getSession(false);
         if (session == null || !ROLE_CUSTOMER.equals(session.getAttribute("role"))) {
             return null;
         }
         Object v = session.getAttribute("customerId");
-        return v instanceof Long ? (Long) v : null;
+        return v instanceof String ? (String) v : null;
     }
 
     /** Id admin đang đăng nhập; null nếu chưa đăng nhập hoặc đang là khách. */
-    public static Long getAdminId(HttpServletRequest req) {
+    public static String getAdminId(HttpServletRequest req) {
         HttpSession session = req.getSession(false);
         if (session == null || !ROLE_ADMIN.equals(session.getAttribute("role"))) {
             return null;
         }
         Object v = session.getAttribute("adminId");
-        return v instanceof Long ? (Long) v : null;
+        return v instanceof String ? (String) v : null;
     }
 
     public static boolean isCustomer(HttpServletRequest req) {
@@ -49,7 +49,7 @@ public final class AuthUtil {
     public static void loginCustomer(HttpServletRequest req, Customer c) {
         HttpSession session = freshSession(req);
         session.setAttribute("role", ROLE_CUSTOMER);
-        session.setAttribute("customerId", c.getId());
+        session.setAttribute("customerId", c.getCustomerId());
         session.setAttribute("currentUserName", c.getFullName());
     }
 

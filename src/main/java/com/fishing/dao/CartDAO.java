@@ -22,7 +22,7 @@ public class CartDAO {
      * Lấy giỏ hàng kèm sản phẩm (JOIN FETCH để JSP đọc được sau khi đóng EntityManager).
      * Chưa có giỏ thì trả về giỏ rỗng (chưa lưu DB).
      */
-    public Cart findByCustomer(Long customerId) {
+    public Cart findByCustomer1(String customerId) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
             Cart cart = em.createQuery(
@@ -40,7 +40,7 @@ public class CartDAO {
     }
 
     /** Tổng số lượng sản phẩm trong giỏ (hiện trên thanh menu). */
-    public int countQuantity(Long customerId) {
+    public int countQuantity1(String customerId) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
             // SUM của cột int trả về Long; giỏ trống thì SUM = null
@@ -56,7 +56,7 @@ public class CartDAO {
     }
 
     /** Thêm sản phẩm vào giỏ. Nếu đã có thì cộng dồn số lượng. */
-    public void addItem(Long customerId, Long productId, int quantity) {
+    public void addItem(String customerId, Long productId, int quantity) {
         if (quantity < 1) {
             throw new BusinessException("Số lượng phải từ 1 trở lên.");
         }
@@ -89,9 +89,9 @@ public class CartDAO {
     }
 
     /** Đổi số lượng. Số lượng 0 nghĩa là xóa khỏi giỏ. */
-    public void updateQuantity(Long customerId, Long productId, int quantity) {
+    public void updateQuantity1(String customerId, Long productId, int quantity) {
         if (quantity <= 0) {
-            removeItem(customerId, productId);
+            removeItem1(customerId, productId);
             return;
         }
         inTransaction(em -> {
@@ -106,7 +106,7 @@ public class CartDAO {
         });
     }
 
-    public void removeItem(Long customerId, Long productId) {
+    public void removeItem1(String customerId, Long productId) {
         inTransaction(em -> {
             Cart cart = findCart(em, customerId);
             CartItem item = cart == null ? null : cart.findItem(productId);
@@ -117,7 +117,7 @@ public class CartDAO {
         });
     }
 
-    public void clear(Long customerId) {
+    public void clear1(String customerId) {
         inTransaction(em -> {
             Cart cart = findCart(em, customerId);
             if (cart != null) {
@@ -139,7 +139,7 @@ public class CartDAO {
         }
     }
 
-    private Cart findCart(EntityManager em, Long customerId) {
+    private Cart findCart(EntityManager em, String customerId) {
         return em.createQuery(
                         "SELECT DISTINCT c FROM Cart c "
                                 + "LEFT JOIN FETCH c.items i LEFT JOIN FETCH i.product "
@@ -150,10 +150,11 @@ public class CartDAO {
                 .orElse(null);
     }
 
-    private Cart getOrCreateCart(EntityManager em, Long customerId) {
+    private Cart getOrCreateCart(EntityManager em, String customerId) {
         Cart cart = findCart(em, customerId);
         if (cart == null) {
             cart = new Cart(customerId);
+            cart.setUpdatedAt(LocalDateTime.now());
             em.persist(cart);
         }
         return cart;
@@ -174,5 +175,28 @@ public class CartDAO {
         } finally {
             em.close();
         }
+    }
+
+    public Cart findByCustomer(String customerId) {
+        return findByCustomer1(customerId);
+    }
+
+    public void updateQuantity(String customerId, Long productId, int qty) {
+        updateQuantity1(customerId, productId,qty );
+    }
+
+    public void removeItem(String customerId, Long productId) {
+        removeItem1(customerId, productId);
+    }
+
+    public void clear(String customerId) {
+        clear1(customerId);
+    }
+
+    public int countQuantity(String customerId){
+        if (customerId ==null){
+            return 0;
+        }
+        return countQuantity1 (customerId);
     }
 }

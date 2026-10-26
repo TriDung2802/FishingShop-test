@@ -23,7 +23,7 @@ public class CustomerDAO {
         }
     }
 
-    public Customer findById(Long id) {
+    public Customer findById(String id) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
             return em.find(Customer.class, id);

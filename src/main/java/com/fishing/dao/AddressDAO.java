@@ -15,11 +15,11 @@ import java.util.function.Consumer;
 public class AddressDAO {
 
     /** Địa chỉ của khách, địa chỉ mặc định đứng đầu. */
-    public List<Address> findByCustomer(Long customerId) {
+    public List<Address> findByCustomer(String customerId) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
             return em.createQuery(
-                            "SELECT a FROM Address a WHERE a.customer.id = :cid "
+                            "SELECT a FROM Address a WHERE a.customer.customerId = :cid "
                                     + "ORDER BY a.isDefault DESC, a.id ASC", Address.class)
                     .setParameter("cid", customerId)
                     .getResultList();
@@ -29,11 +29,11 @@ public class AddressDAO {
     }
 
     /** null nếu không có hoặc không phải của khách này. */
-    public Address findById(Long id, Long customerId) {
+    public Address findById(String id, String customerId) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
             return em.createQuery(
-                            "SELECT a FROM Address a WHERE a.id = :id AND a.customer.id = :cid", Address.class)
+                            "SELECT a FROM Address a WHERE a.id = :id AND a.customer.customerId = :cid", Address.class)
                     .setParameter("id", id)
                     .setParameter("cid", customerId)
                     .getResultStream()
@@ -45,15 +45,16 @@ public class AddressDAO {
     }
 
     /** Thêm mới (id null) hoặc cập nhật. Địa chỉ đầu tiên của khách tự thành mặc định. */
-    public void save(Address input, Long customerId) {
+    public void save(Address input, String customerId) {
         inTransaction(em -> {
             Address a;
             if (input.getId() == null) {
                 a = new Address();
+                a.setId(java.util.UUID.randomUUID().toString());
                 a.setCustomer(em.getReference(Customer.class, customerId));
             } else {
                 a = em.createQuery(
-                                "SELECT a FROM Address a WHERE a.id = :id AND a.customer.id = :cid", Address.class)
+                                "SELECT a FROM Address a WHERE a.id = :id AND a.customer.customerId = :cid", Address.class)
                         .setParameter("id", input.getId())
                         .setParameter("cid", customerId)
                         .getResultStream()
@@ -65,12 +66,12 @@ public class AddressDAO {
             }
             a.setReceiverName(input.getReceiverName());
             a.setReceiverPhone(input.getReceiverPhone());
-            a.setStreet(input.getStreet());
+            a.setAddressLabel(input.getAddressLabel());
             a.setWard(input.getWard());
             a.setDistrict(input.getDistrict());
             a.setCity(input.getCity());
 
-            long count = em.createQuery("SELECT COUNT(a) FROM Address a WHERE a.customer.id = :cid", Long.class)
+            long count = em.createQuery("SELECT COUNT(a) FROM Address a WHERE a.customer.customerId = :cid", Long.class)
                     .setParameter("cid", customerId)
                     .getSingleResult();
             boolean makeDefault = input.isDefault() || (input.getId() == null && count == 0);
@@ -84,10 +85,10 @@ public class AddressDAO {
         });
     }
 
-    public void setDefault(Long id, Long customerId) {
+    public void setDefault(String id, String customerId) {
         inTransaction(em -> {
             Address a = em.find(Address.class, id);
-            if (a != null && a.getCustomer().getId().equals(customerId)) {
+            if (a != null && a.getCustomer().getCustomerId().equals(customerId)) {
                 clearDefault(em, customerId);
                 a.setDefault(true);
             }
@@ -95,17 +96,17 @@ public class AddressDAO {
     }
 
     /** Xóa địa chỉ mặc định thì địa chỉ còn lại đầu tiên thành mặc định. */
-    public void delete(Long id, Long customerId) {
+    public void delete(String id, String customerId) {
         inTransaction(em -> {
             Address a = em.find(Address.class, id);
-            if (a == null || !a.getCustomer().getId().equals(customerId)) {
+            if (a == null || !a.getCustomer().getCustomerId().equals(customerId)) {
                 return;
             }
             boolean wasDefault = a.isDefault();
             em.remove(a);
             em.flush();
             if (wasDefault) {
-                em.createQuery("SELECT a FROM Address a WHERE a.customer.id = :cid ORDER BY a.id", Address.class)
+                em.createQuery("SELECT a FROM Address a WHERE a.customer.customerId = :cid ORDER BY a.id", Address.class)
                         .setParameter("cid", customerId)
                         .setMaxResults(1)
                         .getResultStream()
@@ -115,8 +116,8 @@ public class AddressDAO {
         });
     }
 
-    private void clearDefault(EntityManager em, Long customerId) {
-        em.createQuery("UPDATE Address a SET a.isDefault = false WHERE a.customer.id = :cid")
+    private void clearDefault(EntityManager em, String customerId) {
+        em.createQuery("UPDATE Address a SET a.isDefault = false WHERE a.customer.customerId = :cid")
                 .setParameter("cid", customerId)
                 .executeUpdate();
     }

@@ -12,7 +12,7 @@ import java.util.List;
 public class FeedbackDAO {
 
     /** Khách đã mua sản phẩm này chưa (có ít nhất một đơn chưa bị hủy chứa sản phẩm). */
-    public boolean hasPurchased(Long customerId, Long productId) {
+    public boolean hasPurchased(String customerId, String productId) {
         if (customerId == null || productId == null) {
             return false;
         }
@@ -98,7 +98,7 @@ public class FeedbackDAO {
     }
 
     /** Khách gửi đánh giá. comment có thể null. */
-    public Feedback add(Long productId, Long customerId, int rating, String comment) {
+    public Feedback add(Long productId, String customerId, int rating, String comment) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
             em.getTransaction().begin();
@@ -142,7 +142,7 @@ public class FeedbackDAO {
 
     // ---------- Câu trả lời (SubFeedback) ----------
 
-    public SubFeedback addReply(Long feedbackId, Long adminId, String content) {
+    public SubFeedback addReply1(Long feedbackId, String adminId, String content) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
             em.getTransaction().begin();
@@ -185,5 +185,15 @@ public class FeedbackDAO {
         } finally {
             em.close();
         }
+    }
+
+    public void addReply(Long feedbackId, String adminId, String content) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'addReply'");
+    }
+
+    public void add(Long productId, String customerId, Integer rating, String comment) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'add'");
     }
 }

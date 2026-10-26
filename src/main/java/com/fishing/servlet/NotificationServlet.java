@@ -29,7 +29,7 @@ public class NotificationServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        Long customerId = AuthUtil.getCustomerId(req);
+        String customerId = AuthUtil.getCustomerId(req);
 
         if ("json".equals(req.getParameter("format"))) {
             List<Notification> latest = notificationDAO.findByRecipient(customerId, 5);
@@ -40,7 +40,7 @@ public class NotificationServlet extends HttpServlet {
                 if (i > 0) {
                     json.append(',');
                 }
-                json.append("{\"id\":").append(n.getId())
+                json.append("{\"id\":").append(str(n.getId()))
                         .append(",\"icon\":").append(str(n.getType() == null ? "" : n.getType().getIcon()))
                         .append(",\"title\":").append(str(n.getTitle()))
                         .append(",\"message\":").append(str(n.getContent()))
@@ -61,13 +61,13 @@ public class NotificationServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        Long customerId = AuthUtil.getCustomerId(req);
+        String customerId = AuthUtil.getCustomerId(req);
         String action = req.getParameter("action");
         if ("readAll".equals(action)) {
             notificationDAO.markAllRead(customerId);
         } else if ("read".equals(action)) {
-            Long id = WebUtil.parseId(req.getParameter("id"));
-            if (id != null) {
+            String id = req.getParameter("id");
+            if(id != null && !id.isBlank()){
                 notificationDAO.markRead(id, customerId);
             }
         }

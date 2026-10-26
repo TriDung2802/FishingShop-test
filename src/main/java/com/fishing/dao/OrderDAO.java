@@ -15,7 +15,7 @@ import com.fishing.util.ShopConfig;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.TypedQuery;
-
+import com.fishing.enums.NotificationType;
 import java.time.LocalDateTime;
 import java.util.EnumMap;
 import java.util.List;
@@ -24,7 +24,7 @@ public class OrderDAO {
 
     private final PaymentDAO paymentDAO = new PaymentDAO();
     private final ShippingDAO shippingDAO = new ShippingDAO();
-
+    private final NotificationDAO notificationDAO = new NotificationDAO();
     /** Dữ liệu người nhận từ form Checkout. */
     public static class ShippingInfo implements java.io.Serializable {
         private static final long serialVersionUID = 1L;
@@ -41,7 +41,7 @@ public class OrderDAO {
         public PaymentMethod getPaymentMethod() { return paymentMethod; }
     }
 
-    public Order placeOrder(Long customerId, ShippingInfo info) {
+    public Order placeOrder1(String customerId, ShippingInfo info) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
             em.getTransaction().begin();
@@ -103,7 +103,7 @@ public class OrderDAO {
             // Tạo thanh toán (PENDING) và vận chuyển (Chờ lấy hàng) cho đơn – phần của Lộc
             paymentDAO.createForOrder(em, order, info.paymentMethod);
             shippingDAO.createForOrder(em, order);
-
+            notificationDAO.create(em, customerId, NotificationType.ORDER_CREATED, "Đặt hàng thành công", "Đơn hàng " + order.getCode() + " đã được tạo và đang chờ xác nhận" );
             cart.getItems().clear();        // orphanRemoval xóa các CartItem
             cart.setUpdatedAt(LocalDateTime.now());
 
@@ -124,7 +124,7 @@ public class OrderDAO {
     // =====================================================================
 
     /** Lịch sử đơn của 1 khách, mới nhất trước. */
-    public List<Order> findByCustomer(Long customerId) {
+    public List<Order> findByCustomer1(String customerId) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
             return em.createQuery(
@@ -138,7 +138,7 @@ public class OrderDAO {
     }
 
     /** Chi tiết đơn. customerId != null thì chỉ trả về nếu đơn thuộc khách đó. */
-    public Order findById(Long id, Long customerId) {
+    public Order findById1(Long id, String customerId) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
             Order o = em.createQuery(
@@ -250,12 +250,12 @@ public class OrderDAO {
             em.close();
         }
     }
-    public void cancelOrder(Long orderId, Long customerId, String reason) {
+    public void cancelOrder1(Long orderId, String customerId, String reason) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
             em.getTransaction().begin();
             Order o = em.find(Order.class, orderId, LockModeType.PESSIMISTIC_WRITE);
-            if (o == null || (customerId != null && !o.getCustomerId().equals(customerId))) {
+            if (o == null || (customerId != null && !customerId.equals(o.getCustomerId()))) {
                 throw new BusinessException("Không tìm thấy đơn hàng.");
             }
             if (customerId != null && o.getStatus() != OrderStatus.PENDING) {
@@ -285,7 +285,7 @@ public class OrderDAO {
 
             paymentDAO.onOrderCancelled(em, orderId);
             shippingDAO.onOrderCancelled(em, orderId);
-
+            notificationDAO.create(em, customerId, NotificationType.ORDER_CANCELLED, "Hủy đơn hàng thành công","Đơn hàng " + o.getCode() + " đã được hủy");
             o.setStatus(OrderStatus.CANCELLED);
             o.setCancelledAt(LocalDateTime.now());
             o.setCancelReason(reason);
@@ -314,5 +314,21 @@ public class OrderDAO {
 
     private String escapeLike(String s) {
         return s.replace("!", "!!").replace("%", "!%").replace("_", "!_");
+    }
+
+    public Order placeOrder(String customerId, ShippingInfo info) {
+        return placeOrder1(customerId, info);
+    }
+
+    public Object findByCustomer(String customerId) {
+        return findByCustomer1(customerId);
+    }
+
+    public Order findById(Long id, String customerId) {
+        return findById1(id, customerId);
+    }
+
+    public void cancelOrder(Long id, String customerId, String reason) {
+        cancelOrder1(id, customerId, reason);
     }
 }

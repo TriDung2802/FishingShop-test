@@ -23,7 +23,7 @@ public class Feedback {
 
     // Tạm dùng số, sau này đổi thành @ManyToOne Customer (phần của Dũng)
     @Column(name = "customer_id")
-    private Long customerId;
+    private String customerId;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -47,8 +47,8 @@ public class Feedback {
     public String getComment() { return comment; }
     public void setComment(String comment) { this.comment = comment; }
 
-    public Long getCustomerId() { return customerId; }
-    public void setCustomerId(Long customerId) { this.customerId = customerId; }
+    public String getCustomerId() { return customerId; }
+    public void setCustomerId1(String customerId2) { this.customerId = customerId2; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
@@ -62,5 +62,10 @@ public class Feedback {
     public void addSubFeedback(SubFeedback subFeedback) {
         subFeedbacks.add(subFeedback);
         subFeedback.setFeedback(this);
+    }
+
+    public void setCustomerId(String customerId2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setCustomerId'");
     }
 }

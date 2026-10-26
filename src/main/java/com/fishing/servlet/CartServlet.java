@@ -31,7 +31,7 @@ public class CartServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        Long customerId = AuthUtil.getCustomerId(req);
+        String customerId = AuthUtil.getCustomerId(req);
         req.setAttribute("cart", cartDAO.findByCustomer(customerId));
         req.setAttribute("maxQty", CartDAO.MAX_QTY_PER_ITEM);
         CartCountFilter.refresh(req, cartDAO);
@@ -41,7 +41,7 @@ public class CartServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        Long customerId = AuthUtil.getCustomerId(req);
+        String customerId = AuthUtil.getCustomerId(req);
         String action = req.getParameter("action");
         Long productId = WebUtil.parseId(req.getParameter("productId"));
 
