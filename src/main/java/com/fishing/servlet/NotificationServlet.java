@@ -9,26 +9,18 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Thông báo của khách (phần của Dũng).
- * GET : /notifications              -> trang danh sách
- *       /notifications?format=json  -> JSON cho chuông thông báo trên header (js/notification.js)
- * POST: action=read id | readAll
- */
 @WebServlet("/notifications")
 public class NotificationServlet extends HttpServlet {
 
     private static final String VIEW = "/WEB-INF/views/customer/notification/list.jsp";
-
     private final NotificationDAO notificationDAO = new NotificationDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+    throws ServletException, IOException {
         String customerId = AuthUtil.getCustomerId(req);
 
         if ("json".equals(req.getParameter("format"))) {
@@ -60,7 +52,7 @@ public class NotificationServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+    throws ServletException, IOException {
         String customerId = AuthUtil.getCustomerId(req);
         String action = req.getParameter("action");
         if ("readAll".equals(action)) {
