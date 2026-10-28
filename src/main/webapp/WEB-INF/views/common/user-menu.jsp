@@ -3,7 +3,6 @@
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <%-- KHU VỰC TÀI KHOẢN: hiển thị theo vai trò trong session (do LoginServlet đặt):
      role = CUSTOMER | ADMIN, currentUserName = tên hiển thị. Chưa đăng nhập thì hiện Đăng nhập / Đăng ký. --%>
-<p>Role: [${sessionScope.role}]</p>
 <div class="user-area">
 
     <%-- Chuông thông báo: chỉ khách đã đăng nhập (js/notification.js đọc các id bên dưới, không đổi id) --%>
