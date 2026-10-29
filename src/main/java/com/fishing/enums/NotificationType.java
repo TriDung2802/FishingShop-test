@@ -12,7 +12,6 @@ public enum NotificationType {
         this.icon = icon;
     }
 
-    /** Biểu tượng hiển thị cạnh thông báo. */
     public String getIcon() {
         return icon;
     }

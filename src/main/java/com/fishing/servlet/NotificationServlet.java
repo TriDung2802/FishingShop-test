@@ -3,32 +3,22 @@ package com.fishing.servlet;
 import com.fishing.dao.NotificationDAO;
 import com.fishing.model.Notification;
 import com.fishing.util.AuthUtil;
-import com.fishing.util.WebUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Thông báo của khách (phần của Dũng).
- * GET : /notifications              -> trang danh sách
- *       /notifications?format=json  -> JSON cho chuông thông báo trên header (js/notification.js)
- * POST: action=read id | readAll
- */
 @WebServlet("/notifications")
 public class NotificationServlet extends HttpServlet {
-
     private static final String VIEW = "/WEB-INF/views/customer/notification/list.jsp";
-
     private final NotificationDAO notificationDAO = new NotificationDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+    throws ServletException, IOException {
         String customerId = AuthUtil.getCustomerId(req);
 
         if ("json".equals(req.getParameter("format"))) {
@@ -41,12 +31,12 @@ public class NotificationServlet extends HttpServlet {
                     json.append(',');
                 }
                 json.append("{\"id\":").append(str(n.getId()))
-                        .append(",\"icon\":").append(str(n.getType() == null ? "" : n.getType().getIcon()))
-                        .append(",\"title\":").append(str(n.getTitle()))
-                        .append(",\"message\":").append(str(n.getContent()))
-                        .append(",\"time\":").append(str(n.getTimeText()))
-                        .append(",\"unread\":").append(!n.isRead())
-                        .append('}');
+                .append(",\"icon\":").append(str(n.getType() == null ? "" : n.getType().getIcon()))
+                .append(",\"title\":").append(str(n.getTitle()))
+                .append(",\"message\":").append(str(n.getContent()))
+                .append(",\"time\":").append(str(n.getTimeText()))
+                .append(",\"unread\":").append(!n.isRead())
+                .append('}');
             }
             json.append("]}");
             resp.setContentType("application/json;charset=UTF-8");
@@ -60,7 +50,7 @@ public class NotificationServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+    throws ServletException, IOException {
         String customerId = AuthUtil.getCustomerId(req);
         String action = req.getParameter("action");
         if ("readAll".equals(action)) {

@@ -8,11 +8,9 @@ public class AdminDAO {
     public Admin findUsername(String username){
         EntityManager em = JPAUtil.createEntityManager();
         try {
-            return em.createQuery("SELECT a FROM Admin a WHERE a.username = username",
-                    Admin.class
-            )
-                    .setParameter("username",username)
-                    .getSingleResult();
+            return em.createQuery("SELECT a FROM Admin a WHERE a.username = username", Admin.class)
+                .setParameter("username",username)
+                .getSingleResult();
         }   catch (NoResultException e){
             return null;
         }   finally {

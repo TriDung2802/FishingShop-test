@@ -1,5 +1,3 @@
-
-
 :root {
        --primary: #0b6fa4;
        --primary-dark: #084c72;
@@ -168,6 +166,7 @@ body.admin .footer { grid-column: 2; }
        .sidebar.open .sidebar-link { display: block; }
        .table { display: block; overflow-x: auto; }
 }
+
 .user-area .btn-ghost {
     color: var(--text, #1f2933);
     border-color: var(--border-strong, #c3ccd5);
