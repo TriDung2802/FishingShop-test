@@ -25,7 +25,7 @@ RUN --mount=type=cache,target=/root/.m2 \
 # =========================================================
 # STAGE 2: RUN WAR ON TOMCAT 11 + JAVA 21
 # =========================================================
-FROM tomcat:11.0-jdk21-temurin
+FROM tomcat:10.1-jdk21-temurin
 
 # Remove Tomcat default applications
 RUN rm -rf /usr/local/tomcat/webapps/*
@@ -39,8 +39,7 @@ COPY --from=build /build/target/fishingshop.war \
 RUN mkdir -p /data/uploads
 
 # Configure JVM
-ENV JAVA_OPTS="--enable-preview -Dfile.encoding=UTF-8 -Dfishing.upload.dir=/data/uploads"
-
+ENV JAVA_OPTS="-Xms64m -Xmx192m -XX:+UseSerialGC -Dfile.encoding=UTF-8 -Dfishing.upload.dir=/data/uploads"
 # Run as a non-root user and grant required permissions
 RUN useradd -r -u 1001 -g root appuser \
     && chown -R 1001:0 /usr/local/tomcat /data \

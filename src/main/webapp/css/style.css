@@ -1,9 +1,3 @@
-/* =====================================================================
-   style.css - NỀN TẢNG GIAO DIỆN DÙNG CHUNG CHO CẢ 4 THÀNH VIÊN
-   Quy tắc: màu, bo góc, đổ bóng... chỉ lấy từ biến :root bên dưới.
-   Muốn đổi tông màu cả website: sửa các biến ở đây, không sửa từng trang.
-   Danh sách thành phần: xem UI_GUIDE.md hoặc mở trang /styleguide.jsp
-   ===================================================================== */
 :root {
        --primary: #0b6fa4;
        --primary-dark: #084c72;
@@ -171,4 +165,13 @@ body.admin .footer { grid-column: 2; }
        .sidebar.open .sidebar-nav { display: flex; }
        .sidebar.open .sidebar-link { display: block; }
        .table { display: block; overflow-x: auto; }
+}
+/* Nút tài khoản trên header nền trắng */
+.user-area .btn-ghost {
+    color: var(--text, #1f2933);
+    border-color: var(--border-strong, #c3ccd5);
+}
+
+.user-area .btn-ghost:hover {
+    background: var(--bg-subtle, #eef2f6);
 }

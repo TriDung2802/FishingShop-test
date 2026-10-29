@@ -8,14 +8,13 @@ import jakarta.persistence.NoResultException;
 
 public class CustomerDAO {
 
-    /** Tìm theo email (không phân biệt hoa thường). */
+    /* Tìm theo email (không phân biệt hoa thường). */
     public Customer findByEmail(String email) {
         EntityManager em = JPAUtil.createEntityManager();
         try {
-            return em.createQuery(
-                            "SELECT c FROM Customer c WHERE LOWER(c.email) = LOWER(:email)", Customer.class)
-                    .setParameter("email", email)
-                    .getSingleResult();
+            return em.createQuery("SELECT c FROM Customer c WHERE LOWER(c.email) = LOWER(:email)", Customer.class)
+                .setParameter("email", email)
+                .getSingleResult();
         } catch (NoResultException e) {
             return null;
         } finally {
@@ -55,7 +54,7 @@ public class CustomerDAO {
         try {
             tx.begin();
             int updated = em.createQuery(
-                            "UPDATE Customer c SET c.password = :password WHERE LOWER(c.email) = LOWER(:email)")
+                    "UPDATE Customer c SET c.password = :password WHERE LOWER(c.email) = LOWER(:email)")
                     .setParameter("password", hashedPassword)
                     .setParameter("email", email)
                     .executeUpdate();

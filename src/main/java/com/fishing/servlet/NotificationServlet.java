@@ -3,7 +3,6 @@ package com.fishing.servlet;
 import com.fishing.dao.NotificationDAO;
 import com.fishing.model.Notification;
 import com.fishing.util.AuthUtil;
-import com.fishing.util.WebUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -14,7 +13,6 @@ import java.util.List;
 
 @WebServlet("/notifications")
 public class NotificationServlet extends HttpServlet {
-
     private static final String VIEW = "/WEB-INF/views/customer/notification/list.jsp";
     private final NotificationDAO notificationDAO = new NotificationDAO();
 
@@ -33,12 +31,12 @@ public class NotificationServlet extends HttpServlet {
                     json.append(',');
                 }
                 json.append("{\"id\":").append(str(n.getId()))
-                        .append(",\"icon\":").append(str(n.getType() == null ? "" : n.getType().getIcon()))
-                        .append(",\"title\":").append(str(n.getTitle()))
-                        .append(",\"message\":").append(str(n.getContent()))
-                        .append(",\"time\":").append(str(n.getTimeText()))
-                        .append(",\"unread\":").append(!n.isRead())
-                        .append('}');
+                .append(",\"icon\":").append(str(n.getType() == null ? "" : n.getType().getIcon()))
+                .append(",\"title\":").append(str(n.getTitle()))
+                .append(",\"message\":").append(str(n.getContent()))
+                .append(",\"time\":").append(str(n.getTimeText()))
+                .append(",\"unread\":").append(!n.isRead())
+                .append('}');
             }
             json.append("]}");
             resp.setContentType("application/json;charset=UTF-8");

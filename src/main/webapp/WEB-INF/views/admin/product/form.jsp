@@ -82,7 +82,7 @@
             <h2>Ảnh đại diện</h2>
             <c:choose>
                 <c:when test="${not empty product.thumbnailUrl}">
-                    <img class="thumb-large" src="${ctx}<c:out value='${product.thumbnailUrl}'/>" alt="Ảnh đại diện">
+                    <img class="thumb-large" src="<c:out value='${product.thumbnailUrl}'/>" alt="Ảnh đại diện">
                 </c:when>
                 <c:otherwise>
                     <p class="muted">Chưa có ảnh đại diện.</p>
@@ -117,7 +117,7 @@
             <div class="album">
                 <c:forEach var="img" items="${images}">
                     <div class="album-item">
-                        <img src="${ctx}<c:out value='${img.imageUrl}'/>" alt="">
+                        <img src="<c:out value='${img.imageUrl}'/>" alt="">
                         <form method="post" data-confirm="Xóa ảnh này khỏi album?"
                               action="${ctx}/admin/product-images?action=deleteImage&amp;productId=${product.id}&amp;imageId=${img.id}">
                             <button type="submit" class="btn btn-danger">Xóa</button>

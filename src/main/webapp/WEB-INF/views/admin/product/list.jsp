@@ -41,7 +41,7 @@
     <c:forEach var="p" items="${products}">
         <tr>
             <td>${p.id}</td>
-            <td><c:choose><c:when test="${not empty p.thumbnailUrl}"><img style="width:64px;height:64px;object-fit:cover" src="${ctx}<c:out value='${p.thumbnailUrl}'/>" alt="Ảnh sản phẩm"></c:when><c:otherwise><span class="muted">Chưa có ảnh</span></c:otherwise></c:choose></td>
+            <td><c:choose><c:when test="${not empty p.thumbnailUrl}"><img style="width:64px;height:64px;object-fit:cover" src="<c:out value='${p.thumbnailUrl}'/>" alt="Ảnh sản phẩm"></c:when><c:otherwise><span class="muted">Chưa có ảnh</span></c:otherwise></c:choose></td>
             <td><c:out value="${p.name}"/></td>
             <td><c:out value="${p.category.name}"/></td>
             <td><c:out value="${p.brand.name}"/></td>

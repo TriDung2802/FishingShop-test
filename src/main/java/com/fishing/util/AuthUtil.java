@@ -5,18 +5,13 @@ import com.fishing.model.Customer;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
-/**
- * Đọc/ghi thông tin đăng nhập trong session.
- * Các thuộc tính đặt khi đăng nhập thành công:
- *   role ("CUSTOMER" | "ADMIN"), currentUserName, customerId (Long) hoặc adminId (Long).
- */
 public final class AuthUtil {
 
     public static final String ROLE_CUSTOMER = "CUSTOMER";
     public static final String ROLE_ADMIN = "ADMIN";
 
     private AuthUtil() {}
-
+ 
     /** Id khách đang đăng nhập; null nếu chưa đăng nhập hoặc đang là admin. */
     public static String getCustomerId(HttpServletRequest req) {
         HttpSession session = req.getSession(false);
@@ -74,8 +69,7 @@ public final class AuthUtil {
         if (next == null || next.isBlank()) {
             return null;
         }
-        if (!next.startsWith(ctx + "/") || next.startsWith("//") || next.contains("\\")
-                || next.contains("\r") || next.contains("\n")) {
+        if (!next.startsWith(ctx + "/") || next.startsWith("//") || next.contains("\\") || next.contains("\r") || next.contains("\n")) {
             return null;
         }
         return next;

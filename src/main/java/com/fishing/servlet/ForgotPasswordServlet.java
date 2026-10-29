@@ -1,4 +1,3 @@
-
 package com.fishing.servlet;
 
 import com.fishing.dao.CustomerDAO;
@@ -25,7 +24,7 @@ public class ForgotPasswordServlet extends HttpServlet {
         }
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+    throws ServletException, IOException {
                 request.setCharacterEncoding("UTF-8");
                 String email = request.getParameter("email");
                 if (email == null || email.isBlank()) {
